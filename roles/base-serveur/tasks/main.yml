@@ -1,0 +1,20 @@
+---
+- name: Configuration de la timezone
+  timezone:
+    name: Europe/Paris
+
+- name: Changement du hostname
+  include_tasks: host.yml
+
+- name: Mise à jour et installation des paquets de base
+  include_tasks: apt.yml
+
+- name: Configuration SSH
+  include_tasks: ssh.yml
+
+- name: Configuration fail2ban
+  include_tasks: fail2ban.yml
+
+- name: Mise en place des régles du pare-feu
+  include_tasks: iptables.yml
+...

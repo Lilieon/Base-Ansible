@@ -1,0 +1,19 @@
+---
+- name: Installation
+  snap:
+    name: certbot
+    classic: true
+  register: res
+  when: item.certificate is defined
+  loop: "{{ domain }}"
+  
+- name: Installation certificat certbot
+  include_tasks: certificate-certbot.yml
+  when: item.certificate is defined and item.certificate.type == 'certbot'
+  with_items: "{{ domain }}"
+
+- name: Installation certificat openssl
+  include_tasks: certificate-openssl.yml
+  when: item.certificate is defined and item.certificate.type == 'openssl'
+  with_items: "{{ domain }}"
+...

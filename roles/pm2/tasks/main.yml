@@ -1,0 +1,15 @@
+---
+- name: Installation
+  npm:
+    name: pm2
+    global: true
+  become: true 
+
+- name: Création fichier ecosystem.config.js
+  template:
+    src: ecosystem.config.js.j2
+    dest: "{{ item.destination }}/ecosystem.config.js"
+  with_items: 
+    - "{{ pm2 }}"
+  become: true
+...

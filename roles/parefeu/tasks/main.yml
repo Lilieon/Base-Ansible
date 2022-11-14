@@ -1,0 +1,21 @@
+---
+
+- name: Ajout de la règle aux parefeu iptables ipv4
+  lineinfile: 
+    path: /etc/iptables/rules.v4
+    insertbefore: COMMIT
+    line: "{{ item }}"
+  with_items: 
+    - "{{ rules }}"
+  notify: Redémarrer iptables
+
+- name: Ajout de la règle aux parefeu iptables ipv6
+  lineinfile: 
+    path: /etc/iptables/rules.v6
+    insertbefore: COMMIT
+    line: "{{ item }}"
+  with_items: 
+    - "{{ rules }}"
+  notify: Redémarrer iptables
+
+...

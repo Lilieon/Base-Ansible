@@ -1,0 +1,22 @@
+ansible_os_family: Debian
+vsftpd_users:
+    - username: ansible
+      name: Ansible base User
+      password: "{{ 'vsftpd_password' | password_hash('sha256', 'mysalt') }}"
+vsftpd_config:
+  listen_port: 990
+  local_enable: YES
+  write_enable: YES
+  chroot_local_user: YES
+  log_ftp_protocol: YES
+  allow_writeable_chroot: YES
+  ssl_enable: YES
+  strict_ssl_read_eof: NO
+  force_local_data_ssl: YES
+  force_local_logins_ssl: YES
+  implicit_ssl: YES
+  ssl_tlsv1: YES
+  ssl_sslv2: NO
+  ssl_sslv3: NO
+  local_root: /var/www/html/
+  ftpd_banner: Serveur FTP Ansible base

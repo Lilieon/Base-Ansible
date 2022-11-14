@@ -1,0 +1,21 @@
+---
+- name: Récupération des sources nodejs
+  get_url:
+    url: https://deb.nodesource.com/setup_{{ node_version }}.x
+    dest: /tmp
+
+- name: Compilation des sources
+  shell: bash /tmp/setup_{{ node_version }}.x
+  become: true
+
+- name: Désinstallation de nodejs (si déjà installé)
+  apt:
+    name: nodejs
+    state: absent
+  become: true
+
+- name: Installation de nodejs
+  apt:
+    name: nodejs
+  become: true
+...

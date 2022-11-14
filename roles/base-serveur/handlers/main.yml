@@ -1,0 +1,16 @@
+---
+- name: Redémarrer sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: Redémarrer fail2ban
+  service:
+    name: fail2ban
+    state: restarted
+
+- name: Redémarrer iptables
+  service:
+    name: iptables
+    state: restarted
+...

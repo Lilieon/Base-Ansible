@@ -1,0 +1,14 @@
+module.exports = {
+  apps : [{
+    name: '{{ item.name }}',
+    script: '{{ item.script | default(script) }}',
+    cwd:'{{ item.cwd }}',
+    autorestart: {{ item.autorestart | default(autorestart) | to_json }},
+    watch: {{ item.watch | default(watch) |to_json }},
+    env: {
+    {% for env in item.env | default(env) %}
+      "{{ env.key }}":"{{ env.value }}",
+    {% endfor %}
+    }
+  }]
+};

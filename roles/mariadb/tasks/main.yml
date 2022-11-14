@@ -1,0 +1,28 @@
+---
+- name: Installation des paquets
+  apt:
+    name: "{{ item }}"
+    state: latest
+  with_items: 
+    - mariadb-server
+    - mariadb-client
+  become: true
+  
+- name: Installation de PyMySQL
+  pip:
+    name: PyMySQL
+
+- name: Démarrage du service
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+  become: true
+
+- name: Création utilisateur mariadb
+  include_tasks: create_user.yml
+
+# - name: Création database mariadb
+#   include_tasks: create_database.yml
+
+...

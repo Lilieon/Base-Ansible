@@ -1,0 +1,92 @@
+[DEFAULT]
+ignoreip = 127.0.0.1/8
+bantime  = 4h
+findtime  = 10m
+maxretry = 3
+destemail = root@localhost
+sendername = Fail2Ban
+sender = fail2ban@localhost
+
+banaction = iptables-multiport
+
+# The simplest action to take: ban only
+action_ = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+
+# ban & send an e-mail with whois report to the destemail.
+action_mw = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+            %(mta)s-whois[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", protocol="%(protocol)s", chain="%(chain)s"]
+
+# ban & send an e-mail with whois report and relevant log lines
+# to the destemail.
+action_mwl = %(banaction)s[name=%(__name__)s, bantime="%(bantime)s", port="%(port)s", protocol="%(protocol)s", chain="%(chain)s"]
+             %(mta)s-whois-lines[name=%(__name__)s, sender="%(sender)s", dest="%(destemail)s", logpath=%(logpath)s, chain="%(chain)s"]
+				
+action = %(action_)s
+
+#
+# SSH servers
+#
+
+[sshd]
+enabled = true
+port = 61022
+filter = sshd
+logpath = %(sshd_log)s
+
+[pam-generic]
+enabled  = true
+filter   = pam-generic
+port     = all
+banaction = iptables-allports
+logpath  = %(sshd_log)s
+
+#
+# HTTP servers
+#
+nginx_error_log = /var/log/nginx*/*error*.log
+
+[nginx-404]
+enabled  = true
+filter   = nginx-404
+action   = iptables-multiport[name=nginx-404, port="http,https", protocol=tcp]
+logpath = %(nginx_error_log)s
+maxretry = 2
+findtime  = 6
+
+[nginx-auth]
+enabled = true
+filter = nginx-auth
+action = iptables-multiport[name=NoAuthFailures, port="http,https"]
+logpath = %(nginx_error_log)s
+bantime = 630
+maxretry = 3
+
+[nginx-login]
+enabled = true
+filter = nginx-login
+action = iptables-multiport[name=NoLoginFailures, port="http,https"]
+logpath = %(nginx_error_log)s
+
+[nginx-badbots]
+enabled  = true
+filter = apache-badbots
+action = iptables-multiport[name=BadBots, port="http,https"]
+logpath = %(nginx_error_log)s
+bantime  = 87000
+maxretry = 1
+
+[nginx-noscript]
+enabled = true
+action = iptables-multiport[name=NoScript, port="http,https"]
+filter = nginx-noscript
+logpath = %(nginx_error_log)s
+maxretry = 6
+bantime  = 87000
+
+[nginx-proxy]
+enabled = true
+action = iptables-multiport[name=NoProxy, port="http,https"]
+filter = nginx-proxy
+logpath = %(nginx_error_log)s
+maxretry = 0
+bantime  = 87000

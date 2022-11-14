@@ -1,0 +1,22 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu1804-ansible:latest
+    pre_build_image: true
+provisioner:
+  name: ansible
+verifier:
+  name: ansible
+scenario:
+  name: default  # optional
+  create_sequence:
+    - create
+    - prepare
+  check_sequence:
+    - destroy
+    - dependency
+    - create

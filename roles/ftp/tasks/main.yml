@@ -1,0 +1,17 @@
+---
+
+- name: Mise en place de vsftpd
+  include_role: 
+    name: weareinteractive.vsftpd
+
+- name: Ajout des rêgles au parefeu
+  include_role: 
+    name: parefeu
+  vars:
+    rules:
+      - -A INPUT -p tcp --dport 990 -j ACCEPT
+      - -A OUTPUT -p tcp --dport 990 -j ACCEPT
+      - -A INPUT -p tcp --dport 989 -j ACCEPT
+      - -A OUTPUT -p tcp --dport 989 -j ACCEPT
+
+...

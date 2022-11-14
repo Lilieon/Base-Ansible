@@ -1,0 +1,6 @@
+script: index.js
+autorestart: true
+watch: false 
+env:
+  - key: NODE_ENV
+    value: production

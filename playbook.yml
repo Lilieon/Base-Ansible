@@ -1,0 +1,19 @@
+---
+
+- name: Installation du serveur web
+  hosts: server
+  gather_facts: false
+  
+  vars_files:
+    - vars/base_vars.yml
+    - vars/base_secure_vars.yml
+
+  roles:
+    # - base-serveur
+    # - certbot
+    # - nginx
+    # - mariadb
+    # - nodejs
+    - pm2
+
+...

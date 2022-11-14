@@ -1,0 +1,9 @@
+# Modifie la configuration ssh du serveur
+---
+- name: Configuration - Bloque la connexion en root
+  lineinfile:
+    dest: "/etc/ssh/sshd_config"
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin no"
+  notify: Redémarrer sshd
+...

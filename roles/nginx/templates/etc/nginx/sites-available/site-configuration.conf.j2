@@ -1,0 +1,38 @@
+server {
+    listen       80 default_server;
+    listen       [::]:80 default_server;
+    server_name  {{ item.name }};
+
+    {% if item.certificate is defined and item.certificate != false %}
+    #enforce https
+    return 301 https://$server_name$request_uri;
+    {% else %}
+    {% include '{{item.name}}.conf.j2' ignore missing %}
+    {% endif %}
+
+}
+
+{% if item.certificate is defined and item.certificate != false %}
+server {
+    listen        443 ssl http2;
+    listen        [::]:443 ssl http2;
+    server_name   {{ item.name }};
+
+    {% if item.certificate.type == "certbot" %}
+    ssl_certificate             /etc/letsencrypt/live/{{ item.name }}/fullchain.pem;
+    ssl_certificate_key         /etc/letsencrypt/live/{{ item.name }}/privkey.pem;
+    ssl_trusted_certificate     /etc/letsencrypt/live/{{ item.name }}/chain.pem;
+    {% elif item.certificate.type == "openssl" %}   
+    ssl_certificate        /etc/ssl/{{ item.name }}.crt;
+    ssl_certificate_key    /etc/ssl/{{ item.name }}.key;
+    {% endif %}
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains;" always;
+    add_header X-Frame-Options sameorigin always;
+    add_header X-Content-Type-Options nosniff;
+
+    {% include '{{item.name}}.conf.j2' ignore missing %} 
+}
+{% endif %}

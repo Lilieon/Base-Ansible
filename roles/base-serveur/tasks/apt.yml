@@ -1,0 +1,18 @@
+#Met à jour le serveur et installe les paquets de base
+---
+- name: Mise à jour du serveur
+  apt:
+    update_cache: yes
+    upgrade: full
+  become: true
+
+- name: Installation des paquets de base
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - fail2ban
+    - iptables-persistent
+    - locate
+    - python3-pip
+    - net-tools
+  become: true

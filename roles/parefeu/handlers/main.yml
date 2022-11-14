@@ -1,0 +1,8 @@
+---
+
+- name: Redémarrer iptables
+  service:
+    name: iptables
+    state: restarted
+
+...

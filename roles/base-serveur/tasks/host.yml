@@ -1,0 +1,23 @@
+# Modifie le hostname ainsi que le fichier /etc/hosts
+---
+- name: Changement du hostname {{ hostname }}
+  hostname:
+    name: "{{ hostname }}"
+    use: systemd
+
+- name: Modification du fichier /etc/hosts - Ajout hostname
+  lineinfile:
+    path: /etc/hosts
+    insertafter: "127.0.0.1\tlocalhost"
+    line: "127.0.0.1       {{ hostname }}"
+  become: true
+
+- name: Modification du fichier /etc/hosts - Ajout domaine
+  lineinfile:
+    path: /etc/hosts
+    insertafter: "127.0.0.1\tlocalhost"
+    line: "127.0.0.1       {{ item.name }}"
+  with_items:
+    - "{{ domain }}"
+  become: true
+...
