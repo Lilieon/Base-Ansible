@@ -8,7 +8,7 @@
 
 
 - name: Redémarrer nginx
-  service: 
+  service:
     name: nginx
     state: restarted
   become: true

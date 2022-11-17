@@ -1,9 +1,9 @@
 ---
 
 - name: Met en place la tâche cron de renouvellement du certificat
-  cron: 
+  cron:
     name: letsencrypt_renouvellement
-    special_time: monthly 
+    special_time: monthly
     job: "/usr/bin/certbot renew"
 
 ...

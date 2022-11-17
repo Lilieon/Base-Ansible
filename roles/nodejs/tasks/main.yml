@@ -5,7 +5,8 @@
     dest: /tmp
 
 - name: Compilation des sources
-  shell: bash /tmp/setup_{{ node_version }}.x
+  command: bash /tmp/setup_{{ node_version }}.x
+  changed_when: false
   become: true
 
 - name: Désinstallation de nodejs (si déjà installé)

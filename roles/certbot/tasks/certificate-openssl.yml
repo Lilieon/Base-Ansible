@@ -7,7 +7,7 @@
 
 - name: Génération du certificat
   command: >
-    openssl req -x509 -nodes -days 365 -newkey rsa:2048 
+    openssl req -x509 -nodes -days 365 -newkey rsa:2048
     -keyout /etc/ssl/private/{{ item.name }}.key
     -out /etc/ssl/certs/{{ item.name }}.crt
     -subj "/C={{ item.certificate.cn | default('FR') }}/ST={{ item.certificate.state | default('France') }}

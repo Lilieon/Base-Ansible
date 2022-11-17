@@ -5,7 +5,7 @@
   notify: Démarrage du service
 
 - name: Suppression de la page par défaut
-  file: 
+  file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: Redémarrer nginx
@@ -22,7 +22,7 @@
     src: etc/nginx/sites-available/site-configuration.conf.j2
     dest: /etc/nginx/sites-available/{{ item.name }}.conf
     backup: yes
-  with_items: 
+  with_items:
     - "{{ domain }}"
   notify: Redémarrer nginx
   become: true
@@ -32,7 +32,7 @@
     src: /etc/nginx/sites-available/{{ item.name }}.conf
     dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
     state: link
-  with_items: 
+  with_items:
     - "{{ domain }}"
   notify: Redémarrer nginx
   become: true

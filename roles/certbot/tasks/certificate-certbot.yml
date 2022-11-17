@@ -14,17 +14,17 @@
 
 - name: Récupération du certificat
   command: >
-    certbot certonly --standalone 
+    certbot certonly --standalone
     --agree-tos
     --email {{ item.certificate.email }}
     -nd {{ item.name }}
-    {% if item.certificate.staging is defined and item.certificate.staging == true %}
+    {% if item.certificate.staging is defined and item.certificate.staging %}
     --test-cert
     {% endif %}
   notify: Met en place la tâche cron de renouvellement du certificat
   when: not letsencrypt_cert.stat.exists
   become: true
-  
+
 - name: Réactivation de nginx
   service:
     name: nginx

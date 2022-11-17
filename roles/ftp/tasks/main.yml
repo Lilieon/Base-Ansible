@@ -1,11 +1,11 @@
 ---
 
 - name: Mise en place de vsftpd
-  include_role: 
+  include_role:
     name: weareinteractive.vsftpd
 
 - name: Ajout des rêgles au parefeu
-  include_role: 
+  include_role:
     name: parefeu
   vars:
     rules:
