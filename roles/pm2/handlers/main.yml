@@ -1,0 +1,7 @@
+---
+- name: Configure pm2 pour execution au reboot
+  command: pm2 startup
+
+- name: Enregistre les processus actuel
+  command: pm2 save
+...

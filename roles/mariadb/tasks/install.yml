@@ -1,0 +1,39 @@
+---
+- name: Installation des paquets
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - mariadb-server
+    - mariadb-client
+    - python3-mysqldb
+  when: (mariadb_server_register_version | d() and not mariadb_server_register_version.stdout)
+  become: true
+
+- name: Démarrage du service
+  service:
+    name: mariadb
+    state: started
+    enabled: true
+  become: true
+
+- name: Vérifie si première installation
+  when: (mariadb_server_register_version | d() and not mariadb_server_register_version.stdout)
+  block:
+    - name: Configure le mot de passe root
+      mysql_user:
+        name: root
+        host: localhost
+        password: "{{ mariadb_root_password }}"
+      become: true
+
+    - name: Suppression des utilisateurs anonymes
+      mysql_user:
+        name: ''
+        host_all: true
+        state: absent
+
+    - name: Suppression de la base de données de test
+      mysql_db:
+        db: 'test'
+        state: 'absent'
+...

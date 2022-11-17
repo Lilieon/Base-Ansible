@@ -32,21 +32,23 @@ ansible-vault decrypt --vault-password-file vault.key fichier_chiffre1.yml fichi
 ```
 
 # Ansible role
-## Backup
-### Description
-Dossier contenant les scripts de l'utilitaire de backup.
-Cette utilitaire repose sur 3 principes :
+## base-serveur
 
-#### Fonctionnement centralisé
-Le serveur de backup initie lui même le processus de sauvegarde des différents serveurs à sauvegarder. (Dans un fonctionnement décentralisé, c'est les serveurs qui copie leur données sur le serveur de backup)
+## certbot
 
-#### Sauvegarde différentielle
-Lors de la première sauvegarde, tout le contenu des répertoires/fichiers à sauvegarder est copié. Les sauvegardes suivantes on enregistre seulement les modifications entre maintenant et la dernière sauvegarde.
+## ftp
 
-#### Journal de statut
-Les différentes opérations seront enregistrées dans des fichiers de log.
+## mariadb
 
-# Description des variables
+## nginx
+
+## nodejs
+
+## parefeu
+
+## pm2
+
+### Description des variables
 ``` yml
 hostname: Nom du serveur
 domain:

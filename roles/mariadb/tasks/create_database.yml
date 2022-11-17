@@ -1,0 +1,21 @@
+---
+- name: Creation nouvelle base de données
+  mysql_db:
+    name: "{{ item.name }}"
+    state: present
+  when: item.installation_type == ansible
+
+- name: Lancement script de création d'une base de données
+  block:
+  - name: Copie du script
+    copy:
+      src: script/database_creation/{{ item.name }}.sql
+      dest: /tmp
+
+  - name: Restoration de la base de données
+    mysql_db:
+      name: "{{ item.name }}"
+      state: import
+      target: /tmp/{{ item.name }}.sql
+  when: item.installation_type == script
+...

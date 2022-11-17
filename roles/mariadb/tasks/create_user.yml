@@ -1,24 +1,14 @@
 ---
-- name: tee
-  debug:
-    var: mariadb_secure
-
-- name: Configure le mot de passe root
-  community.mysql.mysql_user:
-    login_unix_socket: /run/mysqld/mysqld.sock
+- name: Create the users
+  mysql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    host: "{{ item.host|default('localhost') }}"
+    priv: "{{ item.privilege }}"
+    append_privs: "{{ item.append_privs|default('no') }}"
     login_user: root
-    login_password: ""
-    name: root
-    password: "{{ mariadb_secure.root_password }}"
+    login_password: "{{ mariadb_root_password }}"
+    # login_unix_socket: "{{ mariadb_socket }}"
     state: present
-  become: true
-
-- name: Removes anonymous user account for localhost
-  community.mysql.mysql_user:
-    name: ''
-    host: localhost
-    state: absent
-    login_unix_socket: /run/mysqld/mysqld.sock
-
-
+  with_items: "{{ mariadb_user }}"
 ...
