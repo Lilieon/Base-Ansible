@@ -6,4 +6,5 @@
     regexp: "^PermitRootLogin"
     line: "PermitRootLogin no"
   notify: Redémarrer sshd
+  become: true
 ...

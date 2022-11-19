@@ -4,6 +4,7 @@
   hostname:
     name: "{{ hostname }}"
     use: systemd
+  become: true
 
 - name: Modification du fichier /etc/hosts - Ajout hostname
   lineinfile:

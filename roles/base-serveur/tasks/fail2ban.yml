@@ -4,10 +4,12 @@
     src: etc/fail2ban/jail.local
     dest: /etc/fail2ban/jail.local
   notify: Redémarrer fail2ban
+  become: true
 
 - name: Création des fichiers de filtres
   copy:
     src: etc/fail2ban/filter.d/
     dest: /etc/fail2ban/filter.d/
   notify: Redémarrer fail2ban
+  become: true
 ...

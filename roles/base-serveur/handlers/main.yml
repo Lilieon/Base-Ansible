@@ -3,14 +3,17 @@
   service:
     name: sshd
     state: restarted
+  become: true
 
 - name: Redémarrer fail2ban
   service:
     name: fail2ban
     state: restarted
+  become: true
 
 - name: Redémarrer iptables
   service:
     name: iptables
     state: restarted
+  become: true
 ...

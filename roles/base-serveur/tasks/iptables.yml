@@ -5,10 +5,12 @@
     src: etc/iptables/rules.v4
     dest: /etc/iptables/rules.v4
   notify: Redémarrer iptables
+  become: true
 
 - name: Création du fichier de configuration du firewall ipv6
   copy:
     src: etc/iptables/rules.v6
     dest: /etc/iptables/rules.v6
   notify: Redémarrer iptables
+  become: true
 ...

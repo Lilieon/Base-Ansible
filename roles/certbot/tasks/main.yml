@@ -6,6 +6,7 @@
   register: res
   when: item.certificate is defined
   loop: "{{ domain }}"
+  become: true
 
 - name: Installation certificat certbot
   include_tasks: certificate-certbot.yml
