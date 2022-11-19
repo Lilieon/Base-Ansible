@@ -1,21 +1,24 @@
+{% include item.name + '/upstream.conf.j2' ignore missing %} 
+
+{% if item.http_port is defined %}
 server {
-    listen       80 default_server;
-    listen       [::]:80 default_server;
+    listen       {{ item.http_port }} default_server;
+    listen       [::]:{{ item.http_port }} default_server;
     server_name  {{ item.name }};
 
-    {% if item.certificate is defined and item.certificate != false %}
+    {% if item.https_port is defined and item.certificate is defined and item.certificate != false %}
     #enforce https
     return 301 https://$server_name$request_uri;
     {% else %}
-    {% include '{{item.name}}.conf.j2' ignore missing %}
+    {% include item.name + '/server_configuration.conf.j2' ignore missing %}
     {% endif %}
-
 }
+{% endif %}
 
-{% if item.certificate is defined and item.certificate != false %}
+{% if item.https_port is defined and item.certificate is defined and item.certificate != false %}
 server {
-    listen        443 ssl http2;
-    listen        [::]:443 ssl http2;
+    listen        {{ item.https_port }} ssl http2;
+    listen        [::]:{{ item.https_port }} ssl http2;
     server_name   {{ item.name }};
 
     {% if item.certificate.type == "certbot" %}
@@ -23,8 +26,8 @@ server {
     ssl_certificate_key         /etc/letsencrypt/live/{{ item.name }}/privkey.pem;
     ssl_trusted_certificate     /etc/letsencrypt/live/{{ item.name }}/chain.pem;
     {% elif item.certificate.type == "openssl" %}   
-    ssl_certificate        /etc/ssl/{{ item.name }}.crt;
-    ssl_certificate_key    /etc/ssl/{{ item.name }}.key;
+    ssl_certificate        /etc/ssl/certs/{{ item.name }}.crt;
+    ssl_certificate_key    /etc/ssl/private/{{ item.name }}.key;
     {% endif %}
     ssl_stapling on;
     ssl_stapling_verify on;
@@ -33,6 +36,6 @@ server {
     add_header X-Frame-Options sameorigin always;
     add_header X-Content-Type-Options nosniff;
 
-    {% include '{{item.name}}.conf.j2' ignore missing %} 
+    {% include item.name + '/server_configuration.conf.j2' ignore missing %} 
 }
 {% endif %}

@@ -3,12 +3,14 @@
   apt:
     name: nginx
   notify: Démarrage du service
+  become: true
 
 - name: Suppression de la page par défaut
   file:
     path: /etc/nginx/sites-enabled/default
     state: absent
   notify: Redémarrer nginx
+  become: true
 
 - name: Création de nginx.conf
   copy:
@@ -16,6 +18,7 @@
     dest: /etc/nginx/nginx.conf
     backup: yes
   notify: Redémarrer nginx
+  become: true
 
 - name: Création du/des fichiers de configuration application
   template:
