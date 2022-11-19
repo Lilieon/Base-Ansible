@@ -31,9 +31,13 @@
         name: ''
         host_all: true
         state: absent
+        login_user: root
+        login_password: "{{ mariadb_root_password }}"
 
     - name: Suppression de la base de données de test
       mysql_db:
         db: 'test'
         state: 'absent'
+        login_user: root
+        login_password: "{{ mariadb_root_password }}"
 ...

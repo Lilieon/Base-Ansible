@@ -58,10 +58,14 @@ domain:
       email: email associé à la demande de certificat
   - name: lilian-test.ddns.net
     certificate: 
+      # type: openssl
       type: openssl
       cn: FR
       state: France
       locality: Nancy
       company: lilian
       section: IT
+      # type: certbot
+      type: certbot
+      email: myemail@pm.me 
 ```

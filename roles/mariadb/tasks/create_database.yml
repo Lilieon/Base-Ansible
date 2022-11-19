@@ -1,21 +1,36 @@
 ---
 - name: Creation nouvelle base de données
   mysql_db:
-    name: "{{ item.name }}"
+    name: "{{ item.database_name }}"
     state: present
-  when: item.installation_type == ansible
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+  when: item.installation_type == 'ansible'
 
 - name: Lancement script de création d'une base de données
   block:
+  - name: Vérifie si la base de données n'existe pas déjà
+    mysql_db:
+      name: "{{ item.database_name }}"
+      state: present
+      login_user: root
+      login_password: "{{ mariadb_root_password }}"
+    register: database_exist
+
   - name: Copie du script
     copy:
-      src: script/database_creation/{{ item.name }}.sql
+      src: script/database_creation/{{ item.script_name }}.sql
       dest: /tmp
+    when: database_exist.changed
 
   - name: Restoration de la base de données
     mysql_db:
-      name: "{{ item.name }}"
+      name: "{{ item.database_name }}"
       state: import
-      target: /tmp/{{ item.name }}.sql
-  when: item.installation_type == script
+      target: /tmp/{{ item.script_name }}.sql
+      login_user: root
+      login_password: "{{ mariadb_root_password }}"
+    when: database_exist.changed
+
+  when: item.installation_type == 'script'
 ...
