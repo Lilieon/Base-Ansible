@@ -1,0 +1,42 @@
+---
+- name: Récupération du dépot git
+  block:
+    - name: Téléchargement du dépot git
+      git:
+        repo: >
+          {% if item.auth_methode == 'ssh' %}
+          git@
+          {% elif item.auth_methode == 'http' %}
+          http{% if item.http_secure is defined and item.http_secure %}s{% endif %}://
+          {% if item.login is defined %}
+            {{ item.login }}:{{ item.password | item.token }}@
+          {% endif %}
+          {% endif %}
+          {{ git_repository }}
+        dest: "{{ item.destination_folder }}"
+        version: '{{ item.version | default(version) }}'
+      become: true
+
+    - name: Changer l'utilisateur pour le dossier git local
+      file:
+        path: "{{ item.destination_folder }}"
+        owner: "{{ item.owner}"
+        when: item.owner is defined
+      become: true
+    
+    - name: Changer le groupe pour le dossier git local
+      file:
+        path: "{{ item.destination_folder }}"
+        group: "{{ item.group }}"
+        when: item.group is defined
+      become: true
+
+    - name: Changer les permission pour le dossier git local
+      file:
+        path: "{{ item.destination_folder }}"
+        mode: "{{ item.mode }}"
+        when: item.mode is defined
+      become: true
+  with_items: 
+    - "{{ git_clone }}"
+...

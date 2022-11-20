@@ -25,5 +25,4 @@
   notify:
     - Configure pm2 pour execution au reboot
     - Enregistre les processus actuel
-
 ...

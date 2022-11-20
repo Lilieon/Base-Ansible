@@ -16,8 +16,8 @@
     # - base-serveur
     # - certbot
     # - nginx
-    - mariadb
-    # - nodejs
+    # - mariadb
+    - nodejs
     # - pm2
-
+    # - git-clone
 ...
