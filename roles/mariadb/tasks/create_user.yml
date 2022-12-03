@@ -1,5 +1,5 @@
 ---
-- name: Create the users
+- name: Creation des utilisateurs
   mysql_user:
     name: "{{ item.name }}"
     password: "{{ item.password }}"

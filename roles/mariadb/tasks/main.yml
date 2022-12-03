@@ -2,7 +2,11 @@
 - name: Vérifie si mariadb-server est installé
   environment:
     LC_MESSAGES: 'C'
-  shell: dpkg-query -W -f='${Version}\n' 'mariadb-server' | grep -v '^$'
+  shell: |
+    set -o pipefail
+    dpkg-query -W -f='${Version}\n' 'mariadb-server' | grep -v '^$'
+  args:
+    executable: /usr/bin/bash
   register: mariadb_server_register_version
   changed_when: False
   failed_when: False

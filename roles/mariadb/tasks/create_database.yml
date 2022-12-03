@@ -5,7 +5,7 @@
     state: present
     login_user: root
     login_password: "{{ mariadb_root_password }}"
-  when: item.installation_type == 'ansible'
+  when: item.installation_type == 'creation'
 
 - name: Lancement script de création d'une base de données
   block:
