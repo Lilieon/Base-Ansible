@@ -1,0 +1,13 @@
+---
+- name: Installation des dépendances
+  npm:
+    path: "{{ item.path_folder }}"
+  when: item.install_package is defined and item.install_package
+  become: true
+
+- name: Compilation de l'application
+  command: "{{ item.build_command }}"
+  args:
+    chdir: "{{ item.path_folder }}"
+  when: item.build is defined and item.build
+...
