@@ -10,10 +10,10 @@
     openssl req -x509 -nodes -days 365 -newkey rsa:2048
     -keyout /etc/ssl/private/{{ item.name }}.key
     -out /etc/ssl/certs/{{ item.name }}.crt
-    -subj "/C={{ item.certificate.cn | default('FR') }}/ST={{ item.certificate.state | default('France') }}
-    /L={{ item.certificate.locality | default('Paris') }}
-    /O={{ item.certificate.company | default('.inc') }}
-    /OU={{ item.certificate.section | default('') }}
+    -subj "/C={{ item.certificate.openssl_cn | default('FR') }}/ST={{ item.certificate.openssl_state | default('France') }}
+    /L={{ item.certificate.openssl_locality | default('Paris') }}
+    /O={{ item.certificate.openssl_company | default('.inc') }}
+    /OU={{ item.certificate.openssl_section | default('IT') }}
     /CN={{ item.name }}"
   when: not openssl_cert.stat.exists
   become: true

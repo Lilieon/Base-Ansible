@@ -16,9 +16,9 @@
   command: >
     certbot certonly --standalone
     --agree-tos
-    --email {{ item.certificate.email }}
+    --email {{ item.certificate.certbot_email }}
     -nd {{ item.name }}
-    {% if item.certificate.staging is defined and item.certificate.staging %}
+    {% if item.certificate.certbot_staging is defined and item.certificate.certbot_staging %}
     --test-cert
     {% endif %}
   notify: Met en place la tâche cron de renouvellement du certificat
