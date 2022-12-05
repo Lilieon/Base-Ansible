@@ -1,6 +1,25 @@
 ---
+- name: Vérifie si nodejs est installé
+  shell: |
+    set -o pipefail
+    node -v | awk -F"v" '{print $2}' | cut -f1 -d"."
+  args:
+    executable: /usr/bin/bash
+  register: node_installed_version
+  changed_when: False
+  failed_when: False
+
+- name: Debug
+  debug:
+    var: node_installed_version
+
+- name: Debug
+  debug:
+    var: node_installed_version.stdout
+
 - name: Installation de nodejs
   include_tasks: install.yml
+  when: node_installed_version is defined and node_installed_version.stdout | int != node_version
 
 - name: Mise en place application
   include_tasks: build.yml

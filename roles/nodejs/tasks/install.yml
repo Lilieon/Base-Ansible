@@ -13,6 +13,7 @@
   apt:
     name: nodejs
     state: absent
+  when: node_installed_version.stdout|length > 0
   become: true
 
 - name: Installation de nodejs
