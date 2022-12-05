@@ -16,6 +16,7 @@ ansible-galaxy collection install -r requirements.yml
 - [mariadb](#mariadb)
 - [nodejs](#nodejs)
 - [pm2](#pm2)
+- [git-clone](#git-clone)
 
 # Commandes
 ## Execution du playbook
@@ -136,7 +137,7 @@ mariadb_root_password: Mot de passe du compte root (Pour plus de sécurité, à 
 mariadb_user:
   - name: Nom de l'utilisateur à créer
     password: Mot de passe de l'utilisateur à créer
-    host: [TODO]
+    host: Le 'host' de l'utilisateur à créer
     privilege: Droit de l'utilisateur (Voir la documentation mysql) ['*.*:ALL,GRANT', ...]
 
 mariadb_database:
@@ -146,32 +147,58 @@ mariadb_database:
 ```
 
 ## nodejs
+### Description
+Installation de nodejs et compilation des applications référencé
+
+### Variables
+``` yml
+node_version: Version de node a installer [lts, 18, 16, 14, ...]
+node_application: 
+  - path_folder: Emplacement de l'application nodejs
+    build: Génération de l'application [true, false]
+    build_command: Commande à utiliser pour la génération
+    install_package: Installation des modules [true, false]
+```
 
 ## pm2
+### Description
+Installation de pm2, génération de la configuration et démarrage des applications nodejs.
+
+### Variables
+``` yml
+pm2:
+  - destination: Dossier de l'application nodejs où sera généré le fichier ecosystem.config.js
+    start_application: fDémarrage de l'application par pm2 [true, false] (Voir pm2 config)
+    name: Nom de l'application (Voir pm2 config)
+    cwd: Dossier où se trouve le script racine de l'application (Voir pm2 config)
+    script: Nom du fichier de script racine de l'application (Voir pm2 config)
+    autorestart: Redémarrage automatique "on fail" [true, false] (Voir pm2 config)
+    watch: Pm2 scrute les modification dans le dossier de l'application [true, false] (Voir pm2 config) 
+    env: Variable d'environnement de l'application
+      - key: Clé de la variable
+        value: Valeur de la variable
+```
 
 ## git-clone
+### Description
+Clone un dépot git et gère les permissions sur le dossier de destination.
+
 ATTENTION: Si le projet a déjà été cloné, l'execution du rôle une seconde fois ne mettra pas à jour (git pull) le dossier. Ca n'effacera pas non plus les modifications locale. Le dossier restera dans son état d'origine.
 
-### Description des variables
+### Variables
 ``` yml
-hostname: Nom du serveur
-domain:
-  - name: Nom de domaine
-    certificate: 
-      type: Type du certificat [certbot, openssl]
-      email: email associé à la demande de certificat
-  - name: lilian-test.ddns.net
-    certificate: 
-      # type: openssl
-      type: openssl
-      cn: FR
-      state: France
-      locality: Nancy
-      company: lilian
-      section: IT
-      # type: certbot
-      type: certbot
-      email: myemail@pm.me 
+git_clone:
+  - git_instance: Instance de git où se trouve le dépot [github.com, gitlab.com, ...]
+    git_repository: Chemin du dépot dans l'instance [dossier/projet.git]
+    destination_folder: Dossier de destination
+    auth_methode: Méthode d'authentification [http,ssh]
+    owner: Proprietaire à définir pour le dossier de destination (Peut-être indéfini)
+    group: Groupe à définir pour le dossier de destination (Peut-être indéfini)
+    mode: Permission à définir sur le dossier de destination (Peut-être indéfini)
+    http_secure: Défini si la connexion http doit être sécurisé (https)[true, false]
+    http_login: Login de connexion
+    http_password: Mot de passe de connexion
+    http_token: Token de connexion (Si mot de passe indéfini)
 ```
 
 [site-configuration.conf.j2]: roles/nginx/templates/etc/nginx/sites-available/site-configuration.conf.j2

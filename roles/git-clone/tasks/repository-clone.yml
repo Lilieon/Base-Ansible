@@ -6,8 +6,8 @@
       git@
       {%- elif item.auth_methode == 'http' -%}
       http{% if item.http_secure is defined and item.http_secure %}s{% endif %}://
-      {%- if item.login is defined -%}
-        {{ item.login }}:{{ item.password | default(item.token) }}@
+      {%- if item.http_login is defined -%}
+        {{ item.http_login }}:{{ item.http_password | default(item.http_token) }}@
       {%- endif -%}
       {%- endif -%}
       {{ item.git_instance }}
