@@ -7,6 +7,7 @@
     dpkg-query -W -f='${Version}\n' 'mariadb-server' | grep -v '^$'
   args:
     executable: /usr/bin/bash
+  when: mariadb_install_server is defined and mariadb_install_server
   register: mariadb_server_register_version
   changed_when: False
   failed_when: False
@@ -16,10 +17,13 @@
 
 - name: Création utilisateur mariadb
   include_tasks: create_user.yml
+  with_items: "{{ mariadb_user }}"
+  when: mariadb_user is defined
 
 - name: Création database mariadb
   include_tasks: create_database.yml
   with_items: "{{ mariadb_database }}"
+  when: mariadb_database is defined
 
 ...
 

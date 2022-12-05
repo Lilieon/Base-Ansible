@@ -130,6 +130,8 @@ Fonctionnalités :
 
 ### Variables
 ``` yml
+mariadb_install_client: IInstallation du client mariadb [true, false]
+mariadb_install_server: Installation du server mariadb [true, false]
 mariadb_root_password: Mot de passe du compte root (Pour plus de sécurité, à chiffrer avec ansible encrypt)
 mariadb_user:
   - name: Nom de l'utilisateur à créer
@@ -146,6 +148,9 @@ mariadb_database:
 ## nodejs
 
 ## pm2
+
+## git-clone
+ATTENTION: Si le projet a déjà été cloné, l'execution du rôle une seconde fois ne mettra pas à jour (git pull) le dossier. Ca n'effacera pas non plus les modifications locale. Le dossier restera dans son état d'origine.
 
 ### Description des variables
 ``` yml

@@ -1,12 +1,20 @@
 ---
+- name: Installation du client mariadb
+  apt:
+    name: mariadb-client
+  when: mariadb_install_client is defined and mariadb_install_client
+  become: true
+
 - name: Installation des paquets
   apt:
     name: "{{ item }}"
   with_items:
     - mariadb-server
-    - mariadb-client
     - python3-mysqldb
-  when: (mariadb_server_register_version | d() and not mariadb_server_register_version.stdout)
+  when: |
+    mariadb_install_server is defined
+    and mariadb_install_server
+    and (mariadb_server_register_version | d() and not mariadb_server_register_version.stdout)
   become: true
 
 - name: Démarrage du service
@@ -14,10 +22,16 @@
     name: mariadb
     state: started
     enabled: true
+  when: |
+    mariadb_install_server is defined
+    and mariadb_install_server
   become: true
 
 - name: Vérifie si première installation
-  when: (mariadb_server_register_version | d() and not mariadb_server_register_version.stdout)
+  when: |
+    mariadb_install_server is defined
+    and mariadb_install_server
+    and (mariadb_server_register_version | d() and not mariadb_server_register_version.stdout)
   block:
     - name: Configure le mot de passe root
       mysql_user:

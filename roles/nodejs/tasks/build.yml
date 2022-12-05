@@ -3,7 +3,6 @@
   npm:
     path: "{{ item.path_folder }}"
   when: item.install_package is defined and item.install_package
-  become: true
 
 - name: Compilation de l'application
   command: "{{ item.build_command }}"

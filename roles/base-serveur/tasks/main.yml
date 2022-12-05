@@ -2,6 +2,7 @@
 - name: Configuration de la timezone
   timezone:
     name: Europe/Paris
+  become: true
 
 - name: Changement du hostname
   include_tasks: host.yml
