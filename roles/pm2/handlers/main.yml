@@ -1,6 +1,7 @@
 ---
 - name: Configure pm2 pour execution au reboot
-  command: pm2 startup
+  command: env PATH=$PATH:/usr/bin /usr/lib/node_modules/pm2/bin/pm2 startup systemd -u {{ user }} --hp /home/{{ user_home.stdout }}
+  become: true
 
 - name: Enregistre les processus actuel
   command: pm2 save

@@ -21,8 +21,17 @@
   command: pm2 start {{ item.destination }}/ecosystem.config.js
   with_items:
     - "{{ pm2 }}"
-  when: pm2.start_application
+  when: item.start_application
   notify:
     - Configure pm2 pour execution au reboot
     - Enregistre les processus actuel
+
+- name: Récupère le chemin du home de l'utilisateur
+  shell: |
+    set -o pipefail
+    egrep "^{{ user }}:" /etc/passwd | awk -F: '{ print $6 }'
+  args:
+    executable: /usr/bin/bash
+  changed_when: false
+  register: user_home
 ...
