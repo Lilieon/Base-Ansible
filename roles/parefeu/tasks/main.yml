@@ -8,6 +8,7 @@
   with_items:
     - "{{ rules }}"
   notify: Redémarrer iptables
+  become: true
 
 - name: Ajout de la règle aux parefeu iptables ipv6
   lineinfile:
@@ -17,5 +18,5 @@
   with_items:
     - "{{ rules }}"
   notify: Redémarrer iptables
-
+  become: true
 ...

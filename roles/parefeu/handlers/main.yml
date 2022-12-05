@@ -4,5 +4,6 @@
   service:
     name: iptables
     state: restarted
+  become: true
 
 ...
