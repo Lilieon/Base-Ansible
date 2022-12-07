@@ -1,7 +1,7 @@
 ---
 
 - name: Installation du serveur web
-  hosts: virtual-ubuntu
+  hosts: server
   gather_facts: false
 
   vars_files:
@@ -11,13 +11,17 @@
     - vars/nginx.yml
     - vars/mariadb.yml
     - vars/mariadb_secure.yml
+    - vars/git.yml
+    - vars/parefeu.yml
 
   roles:
-    # - base-serveur
-    # - certbot
-    # - nginx
-    # - mariadb
+    - base-serveur
+    - certbot
+    - nginx
+    - mariadb
+    - git-clone
     - nodejs
-    # - pm2
-    # - git-clone
+    - parefeu
+    - pm2
+    - reboot
 ...

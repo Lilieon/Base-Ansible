@@ -9,14 +9,6 @@
   changed_when: False
   failed_when: False
 
-- name: Debug
-  debug:
-    var: node_installed_version
-
-- name: Debug
-  debug:
-    var: node_installed_version.stdout
-
 - name: Installation de nodejs
   include_tasks: install.yml
   when: node_installed_version is defined and node_installed_version.stdout | int != node_version

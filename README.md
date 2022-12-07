@@ -100,7 +100,7 @@ Exemple pour l'ouverture des ports ftps :
 
 ## ftp
 ### Description
-Mise en place de vsftpd sur le serveur.
+Mise en place de vsftpd sur le serveur.  
 Utilise la collection partagée weareinteractive.vsftpd (Voir la documentation de la collection pour plus de détail)
 
 ## nginx
@@ -131,7 +131,7 @@ Fonctionnalités :
 
 ### Variables
 ``` yml
-mariadb_install_client: IInstallation du client mariadb [true, false]
+mariadb_install_client: Installation du client mariadb [true, false]
 mariadb_install_server: Installation du server mariadb [true, false]
 mariadb_root_password: Mot de passe du compte root (Pour plus de sécurité, à chiffrer avec ansible encrypt)
 mariadb_user:

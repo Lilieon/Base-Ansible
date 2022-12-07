@@ -1,0 +1,8 @@
+---
+- name: Déclenche tous les handlers
+  ansible.builtin.meta: flush_handlers
+
+- name: Redémarre le serveur
+  reboot:
+  become: true
+...

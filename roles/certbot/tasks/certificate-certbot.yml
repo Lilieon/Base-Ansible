@@ -9,6 +9,8 @@
   service:
     name: nginx
     state: stopped
+  register: service_status
+  failed_when: "service_status is failed and ('find' not in service_status.msg)"
   when: not letsencrypt_cert.stat.exists
   become: true
 
@@ -29,6 +31,8 @@
   service:
     name: nginx
     state: started
+  register: service_status
+  failed_when: "service_status is failed and ('find' not in service_status.msg)"
   when: not letsencrypt_cert.stat.exists
   become: true
 ...
