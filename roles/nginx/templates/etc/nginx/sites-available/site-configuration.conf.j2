@@ -15,7 +15,7 @@ server {
 }
 {% endif %}
 
-{% if item.https_port is defined and item.certificate is defined and item.certificate != false %}
+{% if item.https_port is defined and item.certificate is defined %}
 server {
     listen        {{ item.https_port }} ssl http2;
     listen        [::]:{{ item.https_port }} ssl http2;
@@ -32,9 +32,7 @@ server {
     ssl_stapling on;
     ssl_stapling_verify on;
 
-    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains;" always;
-    add_header X-Frame-Options sameorigin always;
-    add_header X-Content-Type-Options nosniff;
+    {% include item.name + '/header.conf.j2' ignore missing %}
 
     {% include item.name + '/server_configuration.conf.j2' ignore missing %} 
 }
