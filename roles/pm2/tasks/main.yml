@@ -17,7 +17,7 @@
     - "{{ pm2 }}"
   become: true
 
-- name: Démarré pm2
+- name: Démarre pm2
   command: pm2 start {{ item.destination }}/ecosystem.config.js
   with_items:
     - "{{ pm2 }}"
