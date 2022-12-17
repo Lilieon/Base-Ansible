@@ -6,13 +6,6 @@
 
   vars_files:
     - vars/base_vars.yml
-    - vars/nodejs.yml
-    - vars/pm2.yml
-    - vars/nginx.yml
-    - vars/mariadb.yml
-    - vars/mariadb_secure.yml
-    - vars/git.yml
-    - vars/parefeu.yml
 
   roles:
     - base-serveur

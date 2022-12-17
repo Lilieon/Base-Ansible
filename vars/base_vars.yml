@@ -1,1 +1,2 @@
-hostname: test
+hostname: localhost
+user: ubuntu
