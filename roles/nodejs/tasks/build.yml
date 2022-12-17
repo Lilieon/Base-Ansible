@@ -5,8 +5,11 @@
   when: item.install_package is defined and item.install_package
 
 - name: Compilation de l'application
-  command: "{{ item.build_command }}"
+  shell: |
+    set -o pipefail
+    {{ item.build_env | default('') }} {{ item.build_command }}
   args:
+    executable: /usr/bin/bash
     chdir: "{{ item.path_folder }}"
   when: item.build is defined and item.build
 ...

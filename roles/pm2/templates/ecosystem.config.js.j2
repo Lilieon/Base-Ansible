@@ -2,6 +2,7 @@ module.exports = {
   apps : [{
     name: '{{ item.name }}',
     script: '{{ item.script | default(script) }}',
+    {% if item.args is defined %} args: '{{ item.args }}' {% endif %}
     cwd:'{{ item.cwd }}',
     autorestart: {{ item.autorestart | default(autorestart) | to_json }},
     watch: {{ item.watch | default(watch) |to_json }},
