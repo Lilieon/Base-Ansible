@@ -26,5 +26,3 @@
   when: mariadb_database is defined
 
 ...
-
-# Voir : https://github.com/bertvv/ansible-role-mariadb/blob/master/tasks/users.yml
