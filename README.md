@@ -238,6 +238,11 @@ Installation de php sur le serveur.
 ### Variables
 ``` yml
 php_version: Version de php à installer ["8.2.1", "7.4.33", ...]
+php_package: Liste des packages php à installer
+  [- php-fpm
+  - php-curl
+  - php-gd
+  - ...]
 ```
 
 # Exemple de fichier de variable
