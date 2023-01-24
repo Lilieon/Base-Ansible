@@ -1,0 +1,55 @@
+---
+- name: Mise en place de clé
+  apt_key:  
+    url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    state: present
+
+- name: Ajout du dépôt de postgresql
+  apt_repository:
+    repo: "deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main"
+    state: present 
+    update_cache: yes
+  become: true
+
+- name: Installation du client postgresql
+  apt:
+    name: postgresql-client{% if postgresql_version is defined and postgresql_version %}-{{ postgresql_version }}{% endif %}
+  when: postgresql_install_client is defined and postgresql_install_client
+  become: true
+  
+- name: "Installation du paquet psycopg2"
+  pip:
+    name: psycopg2-binary
+    state: present
+  become: true
+
+- name: Installation du serveur postgresql
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - postgresql{% if postgresql_version is defined and postgresql_version %}-{{ postgresql_version }}{% endif %}
+    - postgresql-contrib{% if postgresql_version is defined and postgresql_version %}-{{ postgresql_version }}{% endif %}
+  when: |
+    postgresql_install_server is defined
+    and postgresql_install_server
+    and (postgresql_server_register_version | d() and not postgresql_server_register_version.stdout)
+  become: true
+
+- name: Démarrage du service postgresql
+  service:
+    name: postgresql
+    state: started
+    enabled: true
+  when: |
+    postgresql_install_server is defined
+    and postgresql_install_server
+  become: true
+
+- name: Modifie le mot de passe root
+  postgresql_user:
+    name: postgres
+    password: "{{ postgresql_root_password }}"
+  become: true
+  become_user: postgres
+
+...

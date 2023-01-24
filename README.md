@@ -133,7 +133,7 @@ Fonctionnalités :
 ### Variables
 ``` yml
 mariadb_install_client: Installation du client mariadb [true, false]
-mariadb_install_server: Installation du server mariadb [true, false]
+mariadb_install_server: Installation du serveur mariadb [true, false]
 mariadb_root_password: Mot de passe du compte root (Pour plus de sécurité, à chiffrer avec ansible encrypt)
 mariadb_user:
   - name: Nom de l'utilisateur à créer
@@ -145,6 +145,35 @@ mariadb_database:
   - installation_type: Type de l'installation [creation, script]
     database_name: Nom de la base de données
     script_name: Nom du script de base de données (sans l'extension .sql)
+```
+
+## postgresql
+### Description
+Mise en place de postgresql sur le serveur.
+Fonctionnalités :
+- Installation de postgresql
+- Création d'utilisateur postgresql
+- Création de base de données :
+  - Nouvelle base de données vide
+  - Avec restauration à partir d'un script (script à joindre dans files/script)
+
+### Variables
+``` yml
+postgresql_install_client: Installation du client postgresql [true, false]
+postgresql_install_server: Installation du serveur postgresql [true, false]
+postgresql_root_password: Mot de passe du compte root (Pour plus de sécurité, à chiffrer avec ansible encrypt)
+postgresql_version: Version de postgresql à installer [13, 12, ...]
+postgresql_user:
+  - name: Nom de l'utilisateur à créer
+    password: Mot de passe de l'utilisateur à créer
+    database: Liste des bases de données sur lesquelles affecter des droits à l'utilisateur
+      - name: Nom de la base de données
+        priv: Droit de l'utilisateur (Voir la documentation postgresql) [ALL, ...]
+        grant_option: Privilèges de gestion de la base de données [true, false]
+postgresql_database:
+  - name: Nom de la base de données
+    installation_type: Type de l'installation [creation, script]
+    script_name: Nom du script de base de données
 ```
 
 ## nodejs

@@ -1,0 +1,27 @@
+---
+- name: Vérifie si postgresql est installé
+  environment:
+    LC_MESSAGES: 'C'
+  shell: |
+    set -o pipefail
+    dpkg-query -W -f='${Version}\n' 'postgresql' | grep -v '^$'
+  args:
+    executable: /usr/bin/bash
+  when: postgresql_install_server is defined and postgresql_install_server
+  register: postgresql_server_register_version
+  changed_when: False
+  failed_when: False
+
+- name: Installation de postgresql
+  include_tasks: postgresql_install.yml
+
+- name: Création database postgresql
+  include_tasks: postgresql_database.yml
+  with_items: "{{ postgresql_database }}"
+  when: postgresql_database is defined
+  
+- name: Création utilisateur postgresql
+  include_tasks: postgresql_user.yml
+  with_items: "{{ postgresql_user }}"
+  when: postgresql_user is defined
+...

@@ -1,0 +1,23 @@
+---
+- name: Creation de l'utilisateur
+  postgresql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+  environment:
+    PGOPTIONS: "-c password_encryption=scram-sha-256"
+  become: true
+  become_user: postgres
+
+- name: Ajout des droits à l'utilisateur
+  postgresql_privs:
+    database: "{{ database.name }}"
+    type: database
+    privs: "{{ database.priv }}"
+    roles: "{{ item.name }}"
+    grant_option: "{{ database.grant_option }}"
+  with_items: "{{ item.database }}"
+  loop_control:
+      loop_var: database
+  become: true
+  become_user: postgres
+...

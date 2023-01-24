@@ -1,0 +1,32 @@
+---
+- name: Creation nouvelle base de données
+  postgresql_db:
+    name: "{{ item.name }}"
+  when: item.installation_type == 'creation'
+  become: true
+  become_user: postgres
+
+- name: Lancement script de création d'une base de données
+  when: item.installation_type == 'script'
+  become: true
+  become_user: postgres
+  block:
+  - name: Vérifie si la base de données n'existe pas déjà
+    postgresql_db:
+      name: "{{ item.name }}"
+      state: present
+    register: database_exist
+
+  - name: Copie du script
+    copy:
+      src: script/database_creation/{{ item.script_name }}.sql
+      dest: /tmp
+    when: database_exist.changed
+
+  - name: Restoration de la base de données
+    postgresql_db:
+      name: "{{ item.name }}"
+      state: restore
+      target: /tmp/{{ item.script_name }}.sql
+    when: database_exist.changed
+...
