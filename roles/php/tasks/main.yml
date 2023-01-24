@@ -1,0 +1,27 @@
+---
+- name: "Télécharger le fichier d'installation"
+  get_url:
+      url: "https://www.php.net/distributions/php-{{php_version}}.tar.gz"
+      dest: "/tmp/php-{{php_version}}.tar.gz"
+  become: true
+
+- name: "Créer le répertoire php"
+  file:
+    path: /usr/local/php
+    state: directory
+  become: true
+
+- name: "Installation de PHP"
+  unarchive:   
+    src: "/tmp/php-{{php_version}}.tar.gz"
+    dest: /usr/local/php
+    remote_src: yes 
+  become: true
+
+- name: "Installation des modules PHP"
+  apt:
+    name: ["{{ php_package }}"]
+    state: present
+  become: true
+...
+

@@ -17,6 +17,7 @@ ansible-galaxy collection install -r requirements.yml
 - [nodejs](#nodejs)
 - [pm2](#pm2)
 - [git-clone](#git-clone)
+- [php](#php)
 
 # Commandes
 ## Execution du playbook
@@ -200,5 +201,19 @@ git_clone:
     http_password: Mot de passe de connexion
     http_token: Token de connexion (Si mot de passe indéfini)
 ```
+
+## php
+### Description
+Installation de php sur le serveur.
+
+### Variables
+``` yml
+php_version: Version de php à installer ["8.2.1", "7.4.33", ...]
+```
+
+# Exemple de fichier de variable
+## Exemple 1
+TODO : Qu'est-ce que je fait ?
+Est-ce que je crée un playbook pour chaque exemple ?
 
 [site-configuration.conf.j2]: roles/nginx/templates/etc/nginx/sites-available/site-configuration.conf.j2
