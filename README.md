@@ -19,6 +19,12 @@ ansible-galaxy collection install -r requirements.yml
 - [git-clone](#git-clone)
 - [php](#php)
 
+# TODO
+- [ ] Ajouter role de backup
+- [ ] Ajouter role de restauration
+- [ ] Ajouter la phase de restauration de base de données dans le rôle mariadb
+- [ ] Voir role kanboard, mattermost, nextcloud et wikijs
+
 # Commandes
 ## Execution du playbook
 Avec le fichier d'inventaire "hosts" passé en paramètre.
@@ -118,6 +124,7 @@ domain:
     http_port: Port http sur lequel le site écoutera
     https_port: Port https sur lequel le site écoutera
     certificate: Variable commune avec certbot - Voir rôle certbot pour plus de détail
+    default_server: Spécifie si le site est le site par défaut [true, false]
 ```
 
 ## mariadb
