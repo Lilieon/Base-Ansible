@@ -44,7 +44,7 @@
   when: item.group is defined
   become: true
 
-- name: Changer les permission pour le dossier git local
+- name: Changer les permissions pour le dossier git local
   file:
     state: directory
     recurse: yes

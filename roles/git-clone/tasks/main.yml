@@ -1,4 +1,9 @@
 ---
+- name: Installation paquet git
+  apt: 
+    name: git
+    state: present
+
 - name: Récupération du dépot git
   include_tasks: repository-clone.yml
   with_items:
