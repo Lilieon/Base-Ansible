@@ -20,8 +20,10 @@
 
 - name: "Installation des modules PHP"
   apt:
-    name: ["{{ php_package }}"]
+    name: "{{ item }}"
     state: present
+  with_items:
+    - ["{{ php_package }}"]
   become: true
 ...
 
