@@ -23,7 +23,9 @@ ansible-galaxy collection install -r requirements.yml
 - [ ] Ajouter role de backup
 - [ ] Ajouter role de restauration
 - [ ] Ajouter la phase de restauration de base de données dans le rôle mariadb
+- [ ] Ajouter la phase de restauration de base de données dans le tôle postgresql
 - [ ] Voir role kanboard, mattermost, nextcloud et wikijs
+- [ ] Ajouter role user
 
 # Commandes
 ## Execution du playbook

@@ -1,5 +1,5 @@
 ---
-- name: Mise en place de clé
+- name: Mise en place de la clé
   apt_key:  
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
@@ -18,8 +18,8 @@
   become: true
   
 - name: "Installation du paquet psycopg2"
-  pip:
-    name: psycopg2-binary
+  apt:
+    name: python3-psycopg2
     state: present
   become: true
 
