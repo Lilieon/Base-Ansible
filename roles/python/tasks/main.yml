@@ -1,0 +1,57 @@
+---
+- name: Installe les dépendances nécessaires à la compilation de Python
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - libreadline-dev
+    - libbz2-dev
+    - libsqlite3-dev
+    - libssl-dev
+  become: true
+
+- name: Clone pyenv
+  git:
+    repo: 'https://github.com/pyenv/pyenv.git'
+    dest: '/opt/pyenv'
+    version: master
+  become: true
+
+- name: Ajouter pyenv au chemin système
+  lineinfile:
+    path: /etc/profile
+    line: 'export PYENV_ROOT="/opt/pyenv"; export PATH="$PATH:$PYENV_ROOT/bin"'
+    create: yes
+  become: true
+
+- name: Ajouter initialisation pyenv au shell
+  lineinfile:
+    path: /etc/profile
+    line: 'if which pyenv > /dev/null; then eval "$(pyenv init -)"; fi'
+  become: true
+
+- name: Check if specific Python version is already installed
+  shell: 'source /etc/profile && pyenv versions --bare'
+  args:
+    executable: /bin/bash
+  register: installed_pythons
+  changed_when: False
+
+- name: Installe la version spécifique de Python
+  shell: 'source /etc/profile && pyenv install {{ python_version }}'
+  args:
+    executable: /bin/bash
+  when: python_version not in installed_pythons.stdout_lines
+  become: true
+
+- name: Fixe la version par défaut de python
+  shell: 'source /etc/profile && pyenv global {{ python_version }}'
+  args:
+    executable: /bin/bash
+  become: true
+
+- name: Ajuster la propriété et les permissions du répertoire /opt/pyenv/shims
+  file:
+    path: /opt/pyenv/shims
+    owner: "{{ user }}"
+    mode: u+w
+  become: true

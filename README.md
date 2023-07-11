@@ -18,6 +18,7 @@ ansible-galaxy collection install -r requirements.yml
 - [pm2](#pm2)
 - [git-clone](#git-clone)
 - [php](#php)
+- [python](#python)
 
 # TODO
 - [ ] Ajouter role de backup
@@ -252,6 +253,15 @@ php_package: Liste des packages php à installer
   - php-curl
   - php-gd
   - ...]
+```
+
+## python
+### Description
+Installation de python sur le serveur. 
+
+### Variables
+``` yml
+python_version: Version de python à installer [3.9.7, 3.8.12, ...]
 ```
 
 # Exemple de fichier de variable
