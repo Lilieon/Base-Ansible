@@ -1,0 +1,19 @@
+- name: Définir la valeur de la clé SSH
+  set_fact:
+    ssh_key_value: >-
+      {% if item.ssh_key_location_type == 'file' %}
+        {{ lookup('file', item.ssh_key_value) }}
+      {% elif item.ssh_key_location_type == 'url' %}
+        {{ lookup('url', item.ssh_key_value) }}
+      {% elif item.ssh_key_location_type == 'string' %}
+        {{ item.ssh_key_value }}
+      {% endif %}
+  when: "item.ssh_key_value is defined and item.ssh_key_value != ''"
+
+
+- name: Ajouter les clés ssh
+  authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ ssh_key_value }}"
+  when: "item.ssh_key_value is defined and item.ssh_key_value != ''"
+  become: true

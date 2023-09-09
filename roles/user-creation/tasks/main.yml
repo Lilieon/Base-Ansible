@@ -1,0 +1,49 @@
+---
+- name: Créer les groupes si nécessaire
+  group:
+    name: "{{ item.1.name }}"
+    state: present
+  loop: "{{ user_creation | subelements('groups', skip_missing=True) }}"
+  become: true
+    
+- name: Créer les utilisateurs sans mot de passe si non fourni
+  user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups | default([]) | map(attribute='name') | join(',') }}"
+    append: yes
+  with_items: "{{ user_creation }}"
+  when: "item.password is undefined or item.password == ''"
+  become: true
+
+- name: Créer les utilisateurs avec mot de passe si fourni
+  user:
+    name: "{{ item.name }}"
+    password: "{{ item.password | password_hash('sha512') }}"
+    groups: "{{ item.groups | default([]) | map(attribute='name') | join(',') }}"
+    append: yes
+  with_items: "{{ user_creation }}"
+  when: "item.password is defined and item.password != ''"
+  become: true
+
+- name: Ajouter l'utilisateur au groupe sudo si nécessaire
+  user:
+    name: "{{ item.name }}"
+    groups: sudo
+    append: yes
+  with_items: "{{ user_creation }}"
+  when: item.sudo is defined and item.sudo == true
+  become: true
+
+- name: Permet à l'utilisateur spécifié d'exécuter des commandes sudo sans mot de passe
+  lineinfile:
+    dest: /etc/sudoers
+    line: "{{ item.name }} ALL=(ALL) NOPASSWD: ALL"
+    validate: 'visudo -cf %s'
+  with_items: "{{ user_creation }}"
+  when: "item.sudo|default(false) and (item.password is undefined or item.password == '')"
+  become: true
+
+- name: 'Autoriser la clé SSH pour {{ item.name }}'
+  include_tasks: add_key.yml
+  loop: "{{ user_creation }}"
+...

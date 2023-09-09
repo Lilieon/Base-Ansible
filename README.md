@@ -9,6 +9,7 @@ ansible-galaxy collection install -r requirements.yml
 
 # Rôles disponible
 - [base-serveur](#base-serveur)
+- [user-creation](#user-creation)
 - [parefeu](#parefeu)
 - [certbot](#certbot)
 - [nginx](#nginx)
@@ -20,13 +21,17 @@ ansible-galaxy collection install -r requirements.yml
 - [php](#php)
 - [python](#python)
 
+- [docker](#docker)
+- [mattermost](#mattermost)
+- [nextcloud](#nextcloud)
+
 # TODO
 - [ ] Ajouter role de backup
 - [ ] Ajouter role de restauration
 - [ ] Ajouter la phase de restauration de base de données dans le rôle mariadb
 - [ ] Ajouter la phase de restauration de base de données dans le tôle postgresql
 - [ ] Voir role kanboard, mattermost, nextcloud et wikijs
-- [ ] Ajouter role user
+- [x] Ajouter role user
 
 # Commandes
 ## Execution du playbook
@@ -68,6 +73,29 @@ hostname: Nom du serveur (Doit être défini)
 domain: 
   - name: Voir rôle nginx pour plus de détail 
 ```
+
+## user-creation
+### Description
+
+Création des utilisateurs et génération de clé rsa ou ajout de clé rsa pré-généré.
+
+### Variables
+``` yml
+user_creation: Liste des utilisateurs à créer
+  - name: Nom de l'utilisateur
+    password: Mot de passe de l'utilisateur
+    sudo: Ajout de l'utilisateur dans le groupe sudo [true, false]
+    groups: Liste des groupes de l'utilisateur
+      - name: Nom du groupe
+    ssh_key_location_type: Emplacement de la clé [url, file, string]
+    ssh_key_value: Chemin ou clé publique de l'utilisateur
+```
+
+### Détails
+Pour la variable ssh_key_location_type, si le type spécifié est 'file' :
+- Si le chemin commence par '/' alors le chemin est considéré comme absolu (/home/user/.ssh/id_rsa.pub)
+- Si le chemin ne commence pas par '/' alors le chemin est considéré comme relatif (id_rsa.pub -> files/id_rsa.pub)
+
 ## certbot
 ### Description
 Installation d'un certificat ssl.
@@ -152,10 +180,19 @@ mariadb_user:
     privilege: Droit de l'utilisateur (Voir la documentation mysql) ['*.*:ALL,GRANT', ...]
 
 mariadb_database:
-  - installation_type: Type de l'installation [creation, script]
+  - installation_type: Type de l'installation [creation, script, restoration]
     database_name: Nom de la base de données
     script_name: Nom du script de base de données (sans l'extension .sql)
+    restore
 ```
+
+### Détails
+**Pour la variable mariadb_database**
+Si le type spécifié est 'script' :
+- Si le chemin commence par '/' alors le chemin est considéré comme absolu (/home/user/script.sql)
+- Si le chemin ne commence pas par '/' alors le chemin est considéré comme relatif (script.sql -> files/script.sql)
+Si le type spécifié est 'restauration' :
+
 
 ## postgresql
 ### Description
@@ -263,6 +300,68 @@ Installation de python sur le serveur.
 ``` yml
 python_version: Version de python à installer [3.9.7, 3.8.12, ...]
 ```
+## docker
+### Description
+
+Installation de Docker sur un serveur :
+- Installation des paquets pré-requis
+- Ajout du repo docker dans apt 
+- Installation de docker 
+- Ajout de l'utilisateur ubuntu dans le groupe docker
+
+## mattermost
+### Description
+
+Mise en place de mattermost sur le serveur.
+Fonctionnalités :
+- Differenciation du type d'installation [creation/restauration] :
+  - Création:
+    - création des groupes et utilisateurs
+    - téléchargement du service
+    - implémentation des fichiers de configuration
+    - démarrage du service
+  - Restauration  :
+    - récupère le répertoire de sauvegarde
+    - copie le répertoire au bon endroit
+    - attribution du prop + groupe
+    - démarrage du service
+
+### Variables
+``` yml
+    installation_type: installe le service de 0 ou depuis des données sauvegardés (creation,script,restauration)
+    user: propriétaire des répertoires Mattermost [mattermost]
+    group: groupe des répertoires Mattermost [www-data]
+    server_backup: serveur de sauvegarde
+    ssh_key_file_path: chemin de la clé ssh permettant la connexion [/.../id_air_consulting_default2]
+```
+
+## nextcloud
+### Description
+
+Mise en place de mattermost sur le serveur.
+Fonctionnalités :
+- Differenciation du type d'installation [creation/restauration] :
+  - Création:
+    - installation de nextcloud
+    - définition du propriétaire
+    - installation de Nextcloud depuis la ligne de commande
+    - copie du fichier config.php
+    - attribution des privilèges
+    - démarrage du service
+  - Restauration  :
+    - récupère le répertoire de sauvegarde
+    - copie le répertoire au bon endroit
+    - attribution du prop + groupe
+    - démarrage du service
+
+### Variables
+``` yml
+    installation_type: installe le service de 0 ou depuis des données sauvegardés (creation,script,restauration)
+    user: propriétaire des répertoires Mattermost [mattermost]
+    server_backup: serveur de sauvegarde
+    ssh_key_file_path: chemin de la clé ssh permettant la connexion [/.../id_air_consulting_default2]
+```
+
 
 # Exemple de fichier de variable
 ## Exemple 1
