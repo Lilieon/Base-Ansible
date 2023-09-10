@@ -171,7 +171,7 @@ Fonctionnalités :
 ### Variables
 ``` yml
 mariadb_install_client: Installation du client mariadb [true, false]
-mariadb_install_server: Installation du serveur mariadb [true, false]
+mariadb_install_server: Installation du server mariadb [true, false]
 mariadb_root_password: Mot de passe du compte root (Pour plus de sécurité, à chiffrer avec ansible encrypt)
 mariadb_user:
   - name: Nom de l'utilisateur à créer
@@ -180,19 +180,17 @@ mariadb_user:
     privilege: Droit de l'utilisateur (Voir la documentation mysql) ['*.*:ALL,GRANT', ...]
 
 mariadb_database:
-  - installation_type: Type de l'installation [creation, script, restoration]
-    database_name: Nom de la base de données
-    script_name: Nom du script de base de données (sans l'extension .sql)
-    restore
+  - installation_type: Type de l'installation [creation, local_script, distant_backup]
+    database_name: Nom de la base de données ou du script
+    backup_server: Serveur de sauvegarde
+    backup_path: Chemin sur le serveur de sauvegarde du dossier de sauvegarde
 ```
 
 ### Détails
-**Pour la variable mariadb_database**
-Si le type spécifié est 'script' :
-- Si le chemin commence par '/' alors le chemin est considéré comme absolu (/home/user/script.sql)
-- Si le chemin ne commence pas par '/' alors le chemin est considéré comme relatif (script.sql -> files/script.sql)
-Si le type spécifié est 'restauration' :
-
+Si la variable "installation_type" est égale à "creation", alors database_name sera utilisé pour nommé la nouvelle base de données.
+Si la variable "installation_type" est égale à "local_script", alors database_name sera utilisé pour récupérer le script de base de données. On cherchera le fichier qui porte le nom de la variable "database_name" (avec l'extension .sql) dans le dossier "files/script/database_creation".
+Si la variable "installation_type" est égale à "distant_backup", alors database_name sera utilisé pour récupérer le script de base de données sur le serveur distant. Le script sera récupéré sur le serveur de sauvegarde à l'emplacement "backup_path".
+**Le nom du script dans les cas "local_script" et "distant_backup" ne doit pas forcément être le même que le nom de la base de données. Mais dans ce cas là, le test d'existence de la base de données ne fonctionnera pas. (On pourra alors restaurer une base de données existante...)**
 
 ## postgresql
 ### Description

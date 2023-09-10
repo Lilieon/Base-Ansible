@@ -27,6 +27,25 @@
     and mariadb_install_server
   become: true
 
+- name: Autorise les connections distantes
+  lineinfile:
+    path: /etc/mysql/mariadb.conf.d/50-server.cnf
+    regexp: '^bind-address'
+    line: 'bind-address = 0.0.0.0'
+    state: present
+  when: mariadb_authorize_distant_connection is defined and mariadb_authorize_distant_connection
+  notify: Redémarre le service mariadb
+  become: true
+
+- name: S'assure que root ne peut pas se connecter depuis des hôtes distants
+  mysql_user:
+    login_host: localhost
+    login_user: root
+    login_password: "{{ mariadb_root_password }}"
+    name: root
+    host: '%'
+    state: absent
+
 - name: Vérifie si première installation
   when: |
     mariadb_install_server is defined

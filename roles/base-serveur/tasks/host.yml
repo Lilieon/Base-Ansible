@@ -20,5 +20,6 @@
     line: "127.0.0.1       {{ item.name }}"
   with_items:
     - "{{ domain }}"
+  when: domain is defined
   become: true
 ...

@@ -1,36 +1,64 @@
 ---
-- name: Creation nouvelle base de données
+- name: Création de la base de données depuis un backup distant
+  when: item.installation_type == 'distant_backup'
+  block:
+    - name: Récupération du backup (fichier sql) # Récupère en local
+      fetch: 
+        src: "{{ item.backup_path }}" #serveur de backup
+        dest: "/tmp/{{ item.database_name }}.sql" # local
+        flat: yes
+      delegate_to: "{{ item.backup_server }}"
+      remote_user: debian
+
+    - name: Copie de la bdd # Copie sur le serveur hôte
+      copy: 
+        src: "/tmp/{{ item.database_name }}.sql" #local
+        dest: "/tmp/" #serveur distant
+
+    - name: Vérifie si la base de données n'existe pas déjà
+      mysql_db:
+        name: "{{ item.database_name }}"
+        state: present
+        login_user: root
+        login_password: "{{ mariadb_root_password }}"
+      register: database_exist
+
+    - name: Restauration de la base de données
+      when: database_exist.changed
+      shell: "mysql -u root -p{{ mariadb_root_password }} < /tmp/{{ item.database_name }}.sql"
+      args:
+        warn: no
+
+# Création d'une base de données vide puis restauration d'un fichier
+- name: Creation de la base de données à partir d'un script local
+  when: item.installation_type == 'local_script'
+  block:
+    - name: Copie du script
+      copy:
+        src: script/database_creation/{{ item.database_name }}.sql
+        dest: /tmp
+
+    - name: Vérifie si la base de données n'existe pas déjà
+      mysql_db:
+        name: "{{ item.database_name }}"
+        state: present
+        login_user: root
+        login_password: "{{ mariadb_root_password }}"
+      register: database_exist
+
+    - name: Restauration de la base de données
+      when: database_exist.changed
+      shell: "mysql -u root -p{{ mariadb_root_password }} < /tmp/{{ item.database_name }}.sql"
+      args:
+        warn: no
+
+# Création d'une base de données vide
+- name: Creation d'une nouvelle base de données vide
+  when: item.installation_type == 'creation'
   mysql_db:
     name: "{{ item.database_name }}"
     state: present
     login_user: root
     login_password: "{{ mariadb_root_password }}"
-  when: item.installation_type == 'creation'
-
-- name: Lancement script de création d'une base de données
-  block:
-  - name: Vérifie si la base de données n'existe pas déjà
-    mysql_db:
-      name: "{{ item.database_name }}"
-      state: present
-      login_user: root
-      login_password: "{{ mariadb_root_password }}"
-    register: database_exist
-
-  - name: Copie du script
-    copy:
-      src: script/database_creation/{{ item.script_name }}.sql
-      dest: /tmp
-    when: database_exist.changed
-
-  - name: Restoration de la base de données
-    mysql_db:
-      name: "{{ item.database_name }}"
-      state: import
-      target: /tmp/{{ item.script_name }}.sql
-      login_user: root
-      login_password: "{{ mariadb_root_password }}"
-    when: database_exist.changed
-
-  when: item.installation_type == 'script'
+    
 ...
