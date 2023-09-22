@@ -3,6 +3,7 @@
   apt_key:  
     url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
     state: present
+  become: true
 
 - name: Ajout du dépôt de postgresql
   apt_repository:
@@ -44,12 +45,4 @@
     postgresql_install_server is defined
     and postgresql_install_server
   become: true
-
-- name: Modifie le mot de passe root
-  postgresql_user:
-    name: postgres
-    password: "{{ postgresql_root_password }}"
-  become: true
-  become_user: postgres
-
 ...

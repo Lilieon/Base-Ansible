@@ -183,6 +183,7 @@ mariadb_database:
   - installation_type: Type de l'installation [creation, local_script, distant_backup]
     database_name: Nom de la base de données ou du script
     backup_server: Serveur de sauvegarde
+    backup_user: Utilisateur de connexion sur le serveur de sauvegarde
     backup_path: Chemin sur le serveur de sauvegarde du dossier de sauvegarde
 ```
 
@@ -197,29 +198,37 @@ Si la variable "installation_type" est égale à "distant_backup", alors databas
 Mise en place de postgresql sur le serveur.
 Fonctionnalités :
 - Installation de postgresql
-- Création d'utilisateur postgresql
 - Création de base de données :
   - Nouvelle base de données vide
-  - Avec restauration à partir d'un script (script à joindre dans files/script)
+  - Avec restauration à partir d'un script (script local à joindre dans files/script ou script sur un serveur distant)
+- Création d'utilisateur postgresql
 
 ### Variables
 ``` yml
 postgresql_install_client: Installation du client postgresql [true, false]
 postgresql_install_server: Installation du serveur postgresql [true, false]
-postgresql_root_password: Mot de passe du compte root (Pour plus de sécurité, à chiffrer avec ansible encrypt)
 postgresql_version: Version de postgresql à installer [13, 12, ...]
+postgresql_database:
+  - installation_type: Type de l'installation [creation, restoration]
+    database_name: Nom de la base de données
+    restoration_location: Emplacement de la restauration [local, distant]
+    restoration_backup_server: Serveur de sauvegarde
+    restoration_backup_user: Utilisateur de connexion sur le serveur de sauvegarde
+    restoration_backup_path: Chemin sur le serveur de sauvegarde du dossier de sauvegarde
 postgresql_user:
   - name: Nom de l'utilisateur à créer
     password: Mot de passe de l'utilisateur à créer
     database: Liste des bases de données sur lesquelles affecter des droits à l'utilisateur
       - name: Nom de la base de données
-        priv: Droit de l'utilisateur (Voir la documentation postgresql) [ALL, ...]
+        privileges: Droit de l'utilisateur (Voir la documentation postgresql) [ALL, CONNECT, CREATE, TEMPORARY, ...]
         grant_option: Privilèges de gestion de la base de données [true, false]
-postgresql_database:
-  - name: Nom de la base de données
-    installation_type: Type de l'installation [creation, script]
-    script_name: Nom du script de base de données
 ```
+
+### Détails
+La variable gather_facts doit être à True dans le playbook pour exécuter ce role.
+Les bases de données sont créées avant les utilisateurs. On peut alors définir les droits des utilisateurs sur les bases de données.
+Le nom de la base de données originale n'est pas inscrit dans les fichier de dump, il faut donc spécifier le nom de la dans laquelle on veut restaurer le dump. (La variable name est aussi utilisé pour retrouver le script, il faut donc que le nom du script soit le même que le nom de la base de données que l'on veut restaurer).
+Si le script sql à restaurer a été écrit (sans utiliser pg_dump), il ne faut pas qu'il y ai l'étape de création de la base de données dans le script. (Sinon, la restauration échouera car la base de données existe déjà).
 
 ## nodejs
 ### Description
@@ -347,17 +356,18 @@ Fonctionnalités :
     - attribution des privilèges
     - démarrage du service
   - Restauration  :
-    - récupère le répertoire de sauvegarde
-    - copie le répertoire au bon endroit
-    - attribution du prop + groupe
+    - récupèration du répertoire de sauvegarde
+    - attribution du propriétaire + groupe
     - démarrage du service
 
 ### Variables
 ``` yml
-    installation_type: installe le service de 0 ou depuis des données sauvegardés (creation,script,restauration)
-    user: propriétaire des répertoires Mattermost [mattermost]
-    server_backup: serveur de sauvegarde
-    ssh_key_file_path: chemin de la clé ssh permettant la connexion [/.../id_air_consulting_default2]
+    nextcloud_installation_type: installe le service de 0 ou depuis des données sauvegardés (creation,script,restauration)
+    nextcloud_version: Numéro de version de nextcloud à installer [latest,nextcloud-27.1.0] (Défaut = latest)
+    nextcloud_password_admin: Mot de passe du compte administrateur nextcloud
+    nextcloud_mariadb_user: Compte utilisateur utilisé pour la création de la base de données
+    nextcloud_mariadb_password: Mot de passe du compte utilisateur utilisé pour la création de la base de données
+    nextcloud_mariadb_database: Nom de la base de données (Défaut = nextcloud)
 ```
 
 

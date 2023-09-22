@@ -12,7 +12,7 @@
   postgresql_privs:
     database: "{{ database.name }}"
     type: database
-    privs: "{{ database.priv }}"
+    privs: "{{ database.privileges }}"
     roles: "{{ item.name }}"
     grant_option: "{{ database.grant_option }}"
   with_items: "{{ item.database }}"

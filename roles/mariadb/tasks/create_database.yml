@@ -8,12 +8,14 @@
         dest: "/tmp/{{ item.database_name }}.sql" # local
         flat: yes
       delegate_to: "{{ item.backup_server }}"
-      remote_user: debian
+      remote_user: "{{ item.backup_user }}"
+      become: true
 
-    - name: Copie de la bdd # Copie sur le serveur hôte
+    - name: Copie du fichier de backup # Copie sur le serveur hôte
       copy: 
         src: "/tmp/{{ item.database_name }}.sql" #local
         dest: "/tmp/" #serveur distant
+      become: true
 
     - name: Vérifie si la base de données n'existe pas déjà
       mysql_db:

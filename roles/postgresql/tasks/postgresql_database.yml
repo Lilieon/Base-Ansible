@@ -1,32 +1,57 @@
----
-- name: Creation nouvelle base de données
-  postgresql_db:
-    name: "{{ item.name }}"
-  when: item.installation_type == 'creation'
-  become: true
-  become_user: postgres
-
-- name: Lancement script de création d'une base de données
-  when: item.installation_type == 'script'
-  become: true
-  become_user: postgres
+--- 
+- name: Restauration de la base de données
+  when: item.installation_type == 'restoration'
   block:
-  - name: Vérifie si la base de données n'existe pas déjà
+
+  - name: Récupération du script de restauration en local
+    when: item.restoration_location == 'local'
+    block:
+      - name: Copie du script
+        copy:
+          src: script/database_creation/{{ item.database_name }}.sql
+          dest: /tmp
+
+  - name: Récupération du script de restauration sur serveur distant
+    when: item.restoration_location == 'distant'
+    block:
+      - name: Récupération du backup (fichier sql) # Récupère en local
+        fetch: 
+          src: "{{ item.restoration_backup_path }}" #serveur de backup
+          dest: "/tmp/{{ item.database_name }}.sql" # local
+          flat: yes
+        delegate_to: "{{ item.restoration_backup_server }}"
+        remote_user: "{{ item.restoration_backup_user }}"
+        become: true
+
+      - name: Copie du fichier de backup # Copie sur le serveur hôte
+        copy: 
+          src: "/tmp/{{ item.database_name }}.sql" #local
+          dest: "/tmp/" #serveur distant
+        become: true
+
+  - name: Vérifie si la base de données n'existe pas déjà et la crée si besoin
     postgresql_db:
-      name: "{{ item.name }}"
+      name: "{{ item.database_name }}"
       state: present
+    become_user: postgres
+    become: true
     register: database_exist
 
-  - name: Copie du script
-    copy:
-      src: script/database_creation/{{ item.script_name }}.sql
-      dest: /tmp
-    when: database_exist.changed
-
   - name: Restoration de la base de données
-    postgresql_db:
-      name: "{{ item.name }}"
-      state: restore
-      target: /tmp/{{ item.script_name }}.sql
     when: database_exist.changed
+    postgresql_db:
+      name: "{{ item.database_name }}"
+      state: restore
+      target: /tmp/{{ item.database_name }}.sql
+    become_user: postgres
+    become: true
+
+# Création d'une base de données vide
+- name: Creation nouvelle base de données
+  when: item.installation_type == 'creation'
+  postgresql_db:
+    name: "{{ item.database_name }}"
+  become: true
+  become_user: postgres
+
 ...
