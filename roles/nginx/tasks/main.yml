@@ -23,7 +23,7 @@
 - name: Création du/des fichiers de configuration application
   template:
     src: etc/nginx/sites-available/site-configuration.conf.j2
-    dest: /etc/nginx/sites-available/{{ item.name }}.conf
+    dest: /etc/nginx/sites-available/{{ item.name }}-{{ item.template_folder }}.conf
     backup: yes
   with_items:
     - "{{ domain }}"
@@ -32,8 +32,8 @@
 
 - name: Activation des sites
   file:
-    src: /etc/nginx/sites-available/{{ item.name }}.conf
-    dest: /etc/nginx/sites-enabled/{{ item.name }}.conf
+    src: /etc/nginx/sites-available/{{ item.name }}-{{ item.template_folder }}.conf
+    dest: /etc/nginx/sites-enabled/{{ item.name }}-{{ item.template_folder }}.conf
     state: link
   with_items:
     - "{{ domain }}"
