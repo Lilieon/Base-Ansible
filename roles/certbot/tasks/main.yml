@@ -1,16 +1,19 @@
 ---
-- name: Installation
-  snap:
-    name: certbot
-    classic: true
-  register: res
-  when: item.certificate is defined
+- name: Vérifier si un certificat certbot est à installer
+  set_fact:
+    install_certbot: true
+  when: item.certificate is defined and item.certificate.type == 'certbot'
   loop: "{{ domain }}"
+
+- name: Installation de certbot
+  apt:
+    name: certbot
+  when: install_certbot
   become: true
 
 - name: Installation certificat certbot
   include_tasks: certificate-certbot.yml
-  when: item.certificate is defined and item.certificate.type == 'certbot'
+  when: install_certbot
   with_items: "{{ domain }}"
 
 - name: Installation certificat openssl
